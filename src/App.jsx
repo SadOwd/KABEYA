@@ -9,6 +9,7 @@ import Tasks from './components/Tasks';
 import Feeding from './components/Feeding';
 import Treatments from './components/Treatments';
 import Expenses from './components/Expenses';
+import SalesPoints from './components/SalesPoints';
 
 function App() {
   const [activeTab, setActiveTab] = useState('overview');
@@ -64,6 +65,17 @@ function App() {
         });
       }
 
+      // Alerte pré-commande
+      if (Math.random() > 0.85) {
+        newAlerts.push({
+          id: Date.now() + 5,
+          type: 'info',
+          title: 'Nouvelle pré-commande',
+          message: 'Commande de 500kg à livrer le 20/01/2026',
+          time: new Date().toLocaleTimeString('fr-FR')
+        });
+      }
+
       setAlerts(newAlerts);
     };
 
@@ -98,6 +110,8 @@ function App() {
         return <Treatments />;
       case 'expenses':
         return <Expenses />;
+      case 'sales':
+        return <SalesPoints />;
       default:
         return <Overview />;
     }

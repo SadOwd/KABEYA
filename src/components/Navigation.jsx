@@ -1,5 +1,5 @@
 import React from 'react';
-import { Activity, RefreshCw, Fish, DollarSign, Calendar, Package, Droplets, FileText } from 'lucide-react';
+import { Activity, RefreshCw, Fish, DollarSign, Calendar, Package, Droplets, FileText, Store } from 'lucide-react';
 
 const Navigation = ({ activeTab, setActiveTab }) => {
   const tabs = [
@@ -7,6 +7,7 @@ const Navigation = ({ activeTab, setActiveTab }) => {
     { id: 'realtime', label: 'Temps Réel', icon: RefreshCw, color: 'from-green-500 to-emerald-500' },
     { id: 'production', label: 'Production', icon: Fish, color: 'from-purple-500 to-pink-500' },
     { id: 'finances', label: 'Finances', icon: DollarSign, color: 'from-yellow-500 to-orange-500' },
+    { id: 'sales', label: 'Points de Vente', icon: Store, color: 'from-pink-500 to-rose-500' },
     { id: 'tasks', label: 'Tâches', icon: Calendar, color: 'from-red-500 to-rose-500' },
     { id: 'feeding', label: 'Alimentation', icon: Package, color: 'from-indigo-500 to-blue-500' },
     { id: 'treatments', label: 'Traitements', icon: Droplets, color: 'from-cyan-500 to-teal-500' },
