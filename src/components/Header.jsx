@@ -10,7 +10,7 @@ const Header = ({ alerts, setAlerts, lastUpdate }) => {
       const doc = new jsPDF('p', 'mm', 'a4');
       
       doc.setFontSize(20);
-      doc.setTextColor(37, 99, 235);
+      doc.setTextColor(16, 185, 129);
       doc.text('KABEYA INC', 105, 20, { align: 'center' });
       
       doc.setFontSize(12);
@@ -18,7 +18,7 @@ const Header = ({ alerts, setAlerts, lastUpdate }) => {
       doc.text('Rapport de Gestion Piscicole', 105, 28, { align: 'center' });
       doc.text(`Généré le: ${new Date().toLocaleDateString('fr-FR')}`, 105, 35, { align: 'center' });
       
-      doc.setDrawColor(37, 99, 235);
+      doc.setDrawColor(16, 185, 129);
       doc.setLineWidth(0.5);
       doc.line(20, 40, 190, 40);
       
@@ -77,22 +77,34 @@ const Header = ({ alerts, setAlerts, lastUpdate }) => {
 
   return (
     <header className="glass-effect-strong sticky top-0 z-50 border-b border-white/10 shadow-2xl">
-      <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-cyan-500/10 to-purple-600/10 opacity-50"></div>
+      <div className="absolute inset-0 bg-gradient-to-r from-green-600/10 via-emerald-500/10 to-teal-600/10 opacity-50"></div>
       
       <div className="container mx-auto px-6 py-4 relative z-10">
         <div className="flex items-center justify-between">
           {/* Logo et Titre */}
           <div className="flex items-center space-x-4 animate-slide-in-left">
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-xl blur-lg opacity-75 animate-pulse-glow"></div>
-              <div className="relative bg-gradient-to-br from-blue-500 to-cyan-400 p-3 rounded-xl shadow-2xl animate-float">
-                <Fish className="w-8 h-8 text-white" />
+              <div className="absolute inset-0 bg-gradient-to-br from-green-500 to-emerald-400 rounded-xl blur-lg opacity-75 animate-pulse-glow"></div>
+              <div className="relative bg-black/80 p-2 rounded-xl shadow-2xl animate-float border border-green-500/30">
+                <img 
+                  src="/images/logo.png" 
+                  alt="Kabeya Fresh" 
+                  className="w-16 h-16 object-contain"
+                  onError={(e) => {
+                    // Fallback si l'image n'est pas trouvée
+                    e.target.style.display = 'none';
+                    e.target.nextElementSibling.style.display = 'flex';
+                  }}
+                />
+                <div className="hidden w-16 h-16 items-center justify-center">
+                  <Fish className="w-10 h-10 text-green-400" />
+                </div>
               </div>
             </div>
             <div>
               <h1 className="text-2xl font-bold neon-glow flex items-center space-x-2">
-                <span className="bg-gradient-to-r from-blue-400 via-cyan-300 to-purple-400 bg-clip-text text-transparent animate-gradient bg-[length:200%_auto]">
-                  KABEYA INC
+                <span className="bg-gradient-to-r from-green-400 via-emerald-300 to-teal-400 bg-clip-text text-transparent animate-gradient bg-[length:200%_auto]">
+                  KABEYA FRESH
                 </span>
                 <Sparkles className="w-5 h-5 text-yellow-400 animate-pulse" />
               </h1>
@@ -105,14 +117,14 @@ const Header = ({ alerts, setAlerts, lastUpdate }) => {
           {/* Actions Rapides */}
           <div className="flex items-center space-x-3 animate-slide-in-right">
             {/* Dernière mise à jour */}
-            <div className="hidden md:flex items-center space-x-2 glass-effect px-4 py-2 rounded-xl border border-white/10 hover:border-cyan-500/50 transition-all">
+            <div className="hidden md:flex items-center space-x-2 glass-effect px-4 py-2 rounded-xl border border-white/10 hover:border-green-500/50 transition-all">
               <div className="relative">
-                <RefreshCw className="w-4 h-4 text-cyan-400 animate-spin-slow" />
-                <div className="absolute inset-0 bg-cyan-400/20 rounded-full blur-md"></div>
+                <RefreshCw className="w-4 h-4 text-green-400 animate-spin-slow" />
+                <div className="absolute inset-0 bg-green-400/20 rounded-full blur-md"></div>
               </div>
               <div className="text-xs">
                 <p className="text-gray-400 font-medium">Dernière MAJ</p>
-                <p className="font-bold text-cyan-400">{lastUpdate.toLocaleTimeString('fr-FR')}</p>
+                <p className="font-bold text-green-400">{lastUpdate.toLocaleTimeString('fr-FR')}</p>
               </div>
             </div>
 
@@ -133,10 +145,10 @@ const Header = ({ alerts, setAlerts, lastUpdate }) => {
                 )}
               </button>
 
-              {/* Dropdown Alertes Amélioré */}
+              {/* Dropdown Alertes */}
               {showAlerts && (
                 <div className="absolute right-0 mt-3 w-96 glass-effect-strong rounded-2xl shadow-2xl border border-white/10 z-50 max-h-[32rem] overflow-hidden animate-scale-in">
-                  <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 via-transparent to-purple-600/20 pointer-events-none"></div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-green-600/20 via-transparent to-teal-600/20 pointer-events-none"></div>
                   
                   <div className="relative p-4 border-b border-white/10">
                     <div className="flex items-center justify-between">
@@ -207,17 +219,17 @@ const Header = ({ alerts, setAlerts, lastUpdate }) => {
               )}
             </div>
 
-            {/* Bouton Export PDF Amélioré */}
+            {/* Bouton Export PDF */}
             <button 
               onClick={exportToPDF}
-              className="relative btn-gradient px-5 py-2.5 rounded-xl font-bold transition-all shadow-lg shadow-blue-500/30 flex items-center space-x-2 hover:shadow-blue-500/50 hover:scale-105 group overflow-hidden"
+              className="relative btn-gradient px-5 py-2.5 rounded-xl font-bold transition-all shadow-lg shadow-green-500/30 flex items-center space-x-2 hover:shadow-green-500/50 hover:scale-105 group overflow-hidden"
             >
               <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
               <Download className="w-4 h-4 relative z-10 group-hover:animate-bounce" />
               <span className="hidden md:inline relative z-10">Export PDF</span>
             </button>
 
-            {/* Statut Cycle Amélioré */}
+            {/* Statut Cycle */}
             <div className="glass-effect border border-green-500/30 px-4 py-2 rounded-xl hover:border-green-500/50 transition-all group">
               <p className="text-xs text-gray-400 font-medium">Cycle 1 - 2025</p>
               <p className="text-sm font-bold text-green-400 flex items-center mt-1">
@@ -233,7 +245,7 @@ const Header = ({ alerts, setAlerts, lastUpdate }) => {
       </div>
 
       {/* Barre de progression décorative */}
-      <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-cyan-400 to-purple-500 opacity-50"></div>
+      <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-green-500 via-emerald-400 to-teal-400 opacity-50"></div>
     </header>
   );
 };

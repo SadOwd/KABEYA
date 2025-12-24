@@ -1,0 +1,898 @@
+import React, { useState } from 'react';
+import { Store, MapPin, Phone, Mail, User, TrendingUp, Package, Clock, CheckCircle, AlertCircle, Plus, Search, Filter, Download, Calendar, DollarSign, Map, Bell, ShoppingCart, BarChart3, Box, ArrowUpDown, FileText, AlertTriangle } from 'lucide-react';
+import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { pointsDeVente, livraisonsHistorique, preCommandes, statsPointsVente, stockPoissons, mouvementsStock, alertesStock, factures, statsFacturation } from '../data/mockData';
+import MapView from './MapView';
+import NotificationSystem from './NotificationSystem';
+import OnlineOrder from './OnlineOrder';
+import DemandForecasting from './DemandForecasting';
+
+const SalesPoints = () => {
+  const [activeView, setActiveView] = useState('pointsVente');
+  const [selectedPoint, setSelectedPoint] = useState(null);
+  const [filterStatus, setFilterStatus] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const filteredPoints = pointsDeVente.filter(point => {
+    const matchStatus = filterStatus === 'all' || point.status === filterStatus;
+    const matchSearch = point.nom.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                       point.zone.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchStatus && matchSearch;
+  });
+
+  const statsByType = pointsDeVente.reduce((acc, point) => {
+    acc[point.type] = (acc[point.type] || 0) + 1;
+    return acc;
+  }, {});
+
+  const typeChartData = Object.entries(statsByType).map(([name, value]) => ({ name, value }));
+
+  const statsByZone = pointsDeVente.reduce((acc, point) => {
+    if (point.status === 'actif') {
+      acc[point.zone] = (acc[point.zone] || 0) + point.volumeMensuel;
+    }
+    return acc;
+  }, {});
+
+  const zoneChartData = Object.entries(statsByZone).map(([name, value]) => ({ name, value }));
+
+  const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4', '#f97316'];
+
+  const getStatusBadge = (status) => {
+    switch(status) {
+      case 'actif': return 'bg-green-500/20 text-green-400 border-green-500/50';
+      case 'inactif': return 'bg-red-500/20 text-red-400 border-red-500/50';
+      default: return 'bg-gray-500/20 text-gray-400 border-gray-500/50';
+    }
+  };
+
+  const getPriorityBadge = (priority) => {
+    switch(priority) {
+      case 'haute': return 'bg-red-500/20 text-red-400';
+      case 'moyenne': return 'bg-orange-500/20 text-orange-400';
+      case 'basse': return 'bg-green-500/20 text-green-400';
+      default: return 'bg-gray-500/20 text-gray-400';
+    }
+  };
+
+  const getCommandeStatusBadge = (status) => {
+    switch(status) {
+      case 'confirmee': return { bg: 'bg-green-500/20', text: 'text-green-400', border: 'border-green-500/50', label: 'Confirmée', icon: CheckCircle };
+      case 'en-attente': return { bg: 'bg-yellow-500/20', text: 'text-yellow-400', border: 'border-yellow-500/50', label: 'En attente', icon: Clock };
+      case 'annulee': return { bg: 'bg-red-500/20', text: 'text-red-400', border: 'border-red-500/50', label: 'Annulée', icon: AlertCircle };
+      default: return { bg: 'bg-gray-500/20', text: 'text-gray-400', border: 'border-gray-500/50', label: status, icon: Package };
+    }
+  };
+
+  // Si une sous-vue spéciale est sélectionnée
+  if (activeView === 'map') return <MapView />;
+  if (activeView === 'notifications') return <NotificationSystem />;
+  if (activeView === 'onlineOrder') return <OnlineOrder />;
+  if (activeView === 'forecasting') return <DemandForecasting />;
+
+  return (
+    <div className="space-y-6 animate-fade-in">
+      {/* Header */}
+      <div className="glass-effect-strong rounded-2xl p-6 border border-white/10 shadow-2xl">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h2 className="text-3xl font-bold mb-2 flex items-center neon-glow">
+              <Store className="w-8 h-8 mr-3 text-green-400" />
+              <span className="bg-gradient-to-r from-green-400 to-emerald-300 bg-clip-text text-transparent">
+                Gestion Points de Vente & Commandes
+              </span>
+            </h2>
+            <p className="text-gray-400">Distribution, livraisons et pré-commandes de production</p>
+          </div>
+          <button className="btn-gradient px-6 py-3 rounded-xl font-bold shadow-lg flex items-center space-x-2 hover:scale-105 transition-all">
+            <Plus className="w-5 h-5" />
+            <span>Nouveau Point de Vente</span>
+          </button>
+        </div>
+
+        {/* Statistiques Rapides */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="glass-effect rounded-xl p-4 border border-white/10 hover:scale-105 transition-all">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-400 mb-1">Points de Vente</p>
+                <p className="text-3xl font-bold text-green-400">{statsPointsVente.totalPointsVente}</p>
+                <p className="text-xs text-green-400 mt-1">↑ {statsPointsVente.pointsActifs} actifs</p>
+              </div>
+              <Store className="w-12 h-12 text-green-400 opacity-50" />
+            </div>
+          </div>
+
+          <div className="glass-effect rounded-xl p-4 border border-white/10 hover:scale-105 transition-all">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-400 mb-1">Volume Mensuel</p>
+                <p className="text-3xl font-bold text-green-400">{statsPointsVente.volumeTotalMensuel.toLocaleString()} kg</p>
+                <p className="text-xs text-gray-400 mt-1">Production distribuée</p>
+              </div>
+              <TrendingUp className="w-12 h-12 text-green-400 opacity-50" />
+            </div>
+          </div>
+
+          <div className="glass-effect rounded-xl p-4 border border-white/10 hover:scale-105 transition-all">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-400 mb-1">CA Mensuel</p>
+                <p className="text-3xl font-bold text-yellow-400">${statsPointsVente.caMensuelTotal.toLocaleString()}</p>
+                <p className="text-xs text-gray-400 mt-1">Distribution totale</p>
+              </div>
+              <DollarSign className="w-12 h-12 text-yellow-400 opacity-50" />
+            </div>
+          </div>
+
+          <div className="glass-effect rounded-xl p-4 border border-white/10 hover:scale-105 transition-all">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-400 mb-1">Pré-commandes</p>
+                <p className="text-3xl font-bold text-green-400">{preCommandes.length}</p>
+                <p className="text-xs text-gray-400 mt-1">{preCommandes.filter(c => c.status === 'confirmee').length} confirmées</p>
+              </div>
+              <Package className="w-12 h-12 text-green-400 opacity-50" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Navigation Sous-sections */}
+      <div className="flex space-x-2 overflow-x-auto scrollbar-hide">
+        {[
+          { id: 'pointsVente', label: '📍 Points de Vente', count: filteredPoints.length, icon: Store },
+          { id: 'preCommandes', label: '📦 Pré-commandes', count: preCommandes.length, icon: Package },
+          { id: 'livraisons', label: '🚚 Livraisons', count: livraisonsHistorique.length, icon: Package },
+          { id: 'stock', label: '📦 Stock', icon: Package },
+          { id: 'facturation', label: '💵 Facturation', icon: DollarSign },
+          { id: 'statistiques', label: '📊 Statistiques', icon: BarChart3 },
+          { id: 'map', label: '🗺️ Carte GPS', icon: Map },
+          { id: 'onlineOrder', label: '🛒 Commande en ligne', icon: ShoppingCart },
+          { id: 'notifications', label: '🔔 Notifications', icon: Bell },
+          { id: 'forecasting', label: '📈 Prévisions', icon: TrendingUp }
+        ].map((view) => {
+          const Icon = view.icon;
+          return (
+            <button
+              key={view.id}
+              onClick={() => setActiveView(view.id)}
+              className={`flex items-center space-x-2 px-6 py-3 rounded-xl font-semibold transition-all whitespace-nowrap ${
+                activeView === view.id ? 'btn-gradient shadow-lg scale-105' : 'glass-effect hover:glass-effect-strong'
+              }`}
+            >
+              <Icon className="w-4 h-4" />
+              <span>{view.label}</span>
+              {view.count !== undefined && (
+                <span className={`ml-1 px-2 py-0.5 rounded-full text-xs font-bold ${
+                  activeView === view.id ? 'bg-white/20' : 'bg-green-500/20 text-green-400'
+                }`}>
+                  {view.count}
+                </span>
+              )}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* SECTION 1: POINTS DE VENTE */}
+      {activeView === 'pointsVente' && (
+        <div className="space-y-6 animate-slide-up">
+          {/* Filtres et Recherche */}
+          <div className="glass-effect-strong rounded-xl p-4 border border-white/10">
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="flex-1 relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <input
+                  type="text"
+                  placeholder="Rechercher par nom ou zone..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-11 pr-4 py-3 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                />
+              </div>
+              <select
+                value={filterStatus}
+                onChange={(e) => setFilterStatus(e.target.value)}
+                className="px-6 py-3 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white focus:ring-2 focus:ring-green-500"
+              >
+                <option value="all">Tous les statuts</option>
+                <option value="actif">Actifs uniquement</option>
+                <option value="inactif">Inactifs</option>
+              </select>
+              <button className="px-6 py-3 bg-green-600 hover:bg-green-700 rounded-lg font-semibold flex items-center space-x-2 transition-colors">
+                <Download className="w-5 h-5" />
+                <span>Exporter</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Liste des Points de Vente */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredPoints.map((point) => (
+              <div
+                key={point.id}
+                className="glass-effect rounded-xl p-6 border border-white/10 hover:scale-105 hover:shadow-2xl transition-all cursor-pointer"
+                onClick={() => setSelectedPoint(point)}
+              >
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex-1">
+                    <h3 className="text-xl font-bold text-white mb-1">{point.nom}</h3>
+                    <span className="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-sm font-semibold">
+                      {point.type}
+                    </span>
+                  </div>
+                  <span className={`px-3 py-1 rounded-full text-xs font-bold border ${getStatusBadge(point.status)}`}>
+                    {point.status}
+                  </span>
+                </div>
+
+                <div className="space-y-3 mb-4">
+                  <div className="flex items-center text-sm text-gray-300">
+                    <MapPin className="w-4 h-4 mr-2 text-green-400" />
+                    {point.zone} • {point.adresse}
+                  </div>
+                  <div className="flex items-center text-sm text-gray-300">
+                    <User className="w-4 h-4 mr-2 text-green-400" />
+                    {point.responsable}
+                  </div>
+                  <div className="flex items-center text-sm text-gray-300">
+                    <Phone className="w-4 h-4 mr-2 text-yellow-400" />
+                    {point.telephone}
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t border-gray-700/50">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-xs text-gray-400 mb-1">Volume/mois</p>
+                      <p className="text-lg font-bold text-green-400">{point.volumeMensuel} kg</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-400 mb-1">CA/mois</p>
+                      <p className="text-lg font-bold text-yellow-400">${point.caMensuel.toLocaleString()}</p>
+                    </div>
+                  </div>
+                  <div className="mt-3 flex items-center justify-between text-xs text-gray-400">
+                    <span>Livraison: {point.frequenceLivraison}</span>
+                    <span>Remise: {point.tauxRemise}%</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* SECTION 2: PRÉ-COMMANDES */}
+      {activeView === 'preCommandes' && (
+        <div className="space-y-6 animate-slide-up">
+          <div className="glass-effect-strong rounded-xl p-6 border border-white/10">
+            <h3 className="text-2xl font-bold mb-6 flex items-center">
+              <Package className="w-6 h-6 mr-3 text-green-400" />
+              Pré-commandes de Production
+            </h3>
+
+            <div className="space-y-4">
+              {preCommandes.map((commande) => {
+                const statusBadge = getCommandeStatusBadge(commande.status);
+                const StatusIcon = statusBadge.icon;
+                
+                return (
+                  <div
+                    key={commande.id}
+                    className="glass-effect rounded-xl p-6 border border-white/10 hover:scale-105 transition-all"
+                  >
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-3 mb-2">
+                          <h4 className="text-xl font-bold text-white">{commande.numeroCommande}</h4>
+                          <span className={`px-3 py-1 rounded-full text-xs font-bold ${getPriorityBadge(commande.priorite)}`}>
+                            {commande.priorite}
+                          </span>
+                        </div>
+                        <p className="text-gray-400">{commande.client}</p>
+                        <p className="text-sm text-gray-500">{commande.pointVente}</p>
+                      </div>
+                      <span className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-semibold border ${statusBadge.bg} ${statusBadge.text} ${statusBadge.border}`}>
+                        <StatusIcon className="w-4 h-4" />
+                        <span>{statusBadge.label}</span>
+                      </span>
+                    </div>
+
+                    <div className="mb-4 p-4 bg-gray-800/30 rounded-lg">
+                      <p className="text-sm text-gray-400 mb-2 font-semibold">Articles commandés:</p>
+                      <div className="space-y-2">
+                        {commande.articles.map((article, index) => (
+                          <div key={index} className="flex items-center justify-between text-sm">
+                            <span className="text-gray-300">{article.espece}</span>
+                            <div className="flex items-center space-x-4">
+                              <span className="text-green-400 font-semibold">{article.quantite} kg</span>
+                              <span className="text-gray-400">@ ${article.prixUnitaire}/kg</span>
+                              <span className="text-green-400 font-bold">${article.montant.toLocaleString()}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                      <div>
+                        <p className="text-xs text-gray-400 mb-1">Date commande</p>
+                        <p className="text-sm text-white font-semibold flex items-center">
+                          <Calendar className="w-3 h-3 mr-1" />
+                          {commande.dateCommande}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-400 mb-1">Livraison souhaitée</p>
+                        <p className="text-sm text-green-400 font-semibold flex items-center">
+                          <Clock className="w-3 h-3 mr-1" />
+                          {commande.dateLivraisonSouhaitee}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-400 mb-1">Montant total</p>
+                        <p className="text-lg text-green-400 font-bold">${commande.montantTotal.toLocaleString()}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-400 mb-1">Reste à payer</p>
+                        <p className="text-lg text-yellow-400 font-bold">${commande.resteAPayer.toLocaleString()}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-4 border-t border-gray-700/50">
+                      <div className="flex items-center text-sm text-gray-400">
+                        <User className="w-4 h-4 mr-2" />
+                        {commande.contact}
+                      </div>
+                      <div className="flex space-x-2">
+                        <button className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg text-sm font-semibold transition-colors">
+                          Voir détails
+                        </button>
+                        {commande.status === 'en-attente' && (
+                          <button className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg text-sm font-semibold transition-colors">
+                            Confirmer
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    {commande.notes && (
+                      <div className="mt-4 p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
+                        <p className="text-sm text-yellow-400">
+                          <span className="font-semibold">Note:</span> {commande.notes}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* SECTION 3: LIVRAISONS */}
+      {activeView === 'livraisons' && (
+        <div className="space-y-6 animate-slide-up">
+          <div className="glass-effect-strong rounded-xl p-6 border border-white/10">
+            <h3 className="text-2xl font-bold mb-6 flex items-center">
+              <Package className="w-6 h-6 mr-3 text-green-400" />
+              Historique des Livraisons
+            </h3>
+
+            <div className="space-y-4">
+              {livraisonsHistorique.map((livraison) => (
+                <div
+                  key={livraison.id}
+                  className="glass-effect rounded-xl p-5 border border-white/10 hover:scale-105 transition-all"
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-3 mb-2">
+                        <h4 className="text-lg font-bold text-white">{livraison.pointVente}</h4>
+                        <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                          livraison.status === 'livree' ? 'bg-green-500/20 text-green-400' :
+                          livraison.status === 'en-cours' ? 'bg-green-500/20 text-green-400' :
+                          'bg-gray-500/20 text-gray-400'
+                        }`}>
+                          {livraison.status === 'livree' ? '✓ Livrée' : 
+                           livraison.status === 'en-cours' ? '🚚 En cours' : '📅 Planifiée'}
+                        </span>
+                      </div>
+                      <p className="text-sm text-gray-400">{livraison.adresse}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-2xl font-bold text-green-400">${livraison.montant.toLocaleString()}</p>
+                      <p className="text-sm text-gray-400">{livraison.quantite} kg</p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4 pt-4 border-t border-gray-700/50">
+                    <div>
+                      <p className="text-xs text-gray-400 mb-1">Date livraison</p>
+                      <p className="text-sm text-white font-semibold">{livraison.date}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-400 mb-1">Articles</p>
+                      <p className="text-sm text-green-400">{livraison.articles.join(', ')}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-400 mb-1">Chauffeur</p>
+                      <p className="text-sm text-white">{livraison.chauffeur}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-400 mb-1">Contact</p>
+                      <p className="text-sm text-white">{livraison.contact}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* SECTION 4: STOCK */}
+      {activeView === 'stock' && (
+        <div className="space-y-6 animate-slide-up">
+          {/* En-tête Stock */}
+          <div className="glass-effect-strong rounded-2xl p-6 border border-white/10">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h3 className="text-2xl font-bold mb-2 flex items-center">
+                  <Box className="w-6 h-6 mr-3 text-green-400" />
+                  Gestion du Stock
+                </h3>
+                <p className="text-gray-400">Suivi des stocks disponibles et mouvements</p>
+              </div>
+              <div className="flex space-x-2">
+                <button className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg font-semibold flex items-center space-x-2 transition-colors">
+                  <Plus className="w-4 h-4" />
+                  <span>Nouveau Mouvement</span>
+                </button>
+                <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold flex items-center space-x-2 transition-colors">
+                  <Download className="w-4 h-4" />
+                  <span>Exporter</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Stats rapides stock */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="glass-effect rounded-xl p-4 border border-white/10 hover:scale-105 transition-all">
+                <p className="text-sm text-gray-400 mb-1">Stock Total</p>
+                <p className="text-3xl font-bold text-green-400">{stockPoissons.reduce((acc, s) => acc + s.poidsTotal, 0).toLocaleString()} kg</p>
+                <p className="text-xs text-gray-400 mt-1">{stockPoissons.reduce((acc, s) => acc + s.quantiteDisponible, 0).toLocaleString()} poissons</p>
+              </div>
+              <div className="glass-effect rounded-xl p-4 border border-white/10 hover:scale-105 transition-all">
+                <p className="text-sm text-gray-400 mb-1">Valeur Estimée</p>
+                <p className="text-3xl font-bold text-yellow-400">${stockPoissons.reduce((acc, s) => acc + s.valeurEstimee, 0).toLocaleString()}</p>
+                <p className="text-xs text-green-400 mt-1">↑ En croissance</p>
+              </div>
+              <div className="glass-effect rounded-xl p-4 border border-white/10 hover:scale-105 transition-all">
+                <p className="text-sm text-gray-400 mb-1">Dispo Immédiat</p>
+                <p className="text-3xl font-bold text-cyan-400">{stockPoissons.filter(s => s.statut === 'Disponible immédiat').reduce((acc, s) => acc + s.poidsTotal, 0)} kg</p>
+                <p className="text-xs text-gray-400 mt-1">Stock surgelé</p>
+              </div>
+              <div className="glass-effect rounded-xl p-4 border border-white/10 hover:scale-105 transition-all">
+                <p className="text-sm text-gray-400 mb-1">Alertes</p>
+                <p className="text-3xl font-bold text-orange-400">{alertesStock.length}</p>
+                <p className="text-xs text-gray-400 mt-1">{alertesStock.filter(a => a.priorite === 'haute').length} haute priorité</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Alertes Stock */}
+          {alertesStock.length > 0 && (
+            <div className="glass-effect-strong rounded-xl p-6 border border-white/10">
+              <h4 className="text-lg font-bold mb-4 flex items-center">
+                <AlertTriangle className="w-5 h-5 mr-2 text-yellow-400" />
+                Alertes Actives
+              </h4>
+              <div className="space-y-3">
+                {alertesStock.map((alerte) => (
+                  <div
+                    key={alerte.id}
+                    className={`p-4 rounded-lg border ${
+                      alerte.type === 'warning' ? 'bg-yellow-500/10 border-yellow-500/30' :
+                      alerte.type === 'success' ? 'bg-green-500/10 border-green-500/30' :
+                      'bg-blue-500/10 border-blue-500/30'
+                    }`}
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-2 mb-1">
+                          <span className="text-sm font-semibold text-white">{alerte.espece}</span>
+                          <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${
+                            alerte.priorite === 'haute' ? 'bg-red-500/20 text-red-400' :
+                            alerte.priorite === 'moyenne' ? 'bg-orange-500/20 text-orange-400' :
+                            'bg-green-500/20 text-green-400'
+                          }`}>
+                            {alerte.priorite}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-300 mb-2">{alerte.message}</p>
+                        <p className="text-xs text-gray-400">→ Action: {alerte.action}</p>
+                      </div>
+                      <p className="text-xs text-gray-500">{alerte.dateAlerte}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Stock par Bassin/Espèce */}
+          <div className="glass-effect-strong rounded-xl p-6 border border-white/10">
+            <h4 className="text-xl font-bold mb-6 flex items-center">
+              <Package className="w-5 h-5 mr-2 text-green-400" />
+              Stock par Bassin & Espèce
+            </h4>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {stockPoissons.map((stock) => (
+                <div
+                  key={stock.id}
+                  className="glass-effect rounded-xl p-5 border border-white/10 hover:scale-105 transition-all"
+                >
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex-1">
+                      <h5 className="text-lg font-bold text-white mb-1">{stock.espece}</h5>
+                      <p className="text-sm text-gray-400">{stock.bassin}</p>
+                      <span className={`inline-block mt-2 px-3 py-1 rounded-full text-xs font-bold ${
+                        stock.statut === 'Disponible immédiat' ? 'bg-green-500/20 text-green-400' :
+                        'bg-blue-500/20 text-blue-400'
+                      }`}>
+                        {stock.statut}
+                      </span>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-2xl font-bold text-green-400">{stock.poidsTotal} kg</p>
+                      <p className="text-sm text-gray-400">{stock.quantiteDisponible.toLocaleString()} poissons</p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                      <p className="text-xs text-gray-400 mb-1">Poids moyen</p>
+                      <p className="text-sm font-semibold text-white">{stock.poidsMoyen}g</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-400 mb-1">Valeur estimée</p>
+                      <p className="text-sm font-semibold text-yellow-400">${stock.valeurEstimee.toLocaleString()}</p>
+                    </div>
+                    {stock.dateAlevinage !== '-' && (
+                      <>
+                        <div>
+                          <p className="text-xs text-gray-400 mb-1">Alevinage</p>
+                          <p className="text-sm text-gray-300">{stock.dateAlevinage}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-400 mb-1">Récolte prévue</p>
+                          <p className="text-sm text-cyan-400">{stock.dateRecolteEstimee}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-400 mb-1">Âge</p>
+                          <p className="text-sm text-white">{stock.ageJours} jours</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-400 mb-1">Croissance</p>
+                          <p className="text-sm text-green-400">+{stock.tauxCroissance}g/jour</p>
+                        </div>
+                      </>
+                    )}
+                  </div>
+
+                  {stock.commentaire && (
+                    <div className="pt-3 border-t border-gray-700/50">
+                      <p className="text-xs text-gray-400">{stock.commentaire}</p>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Mouvements de Stock */}
+          <div className="glass-effect-strong rounded-xl p-6 border border-white/10">
+            <h4 className="text-xl font-bold mb-6 flex items-center">
+              <ArrowUpDown className="w-5 h-5 mr-2 text-cyan-400" />
+              Mouvements Récents
+            </h4>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-gray-700">
+                    <th className="text-left py-3 px-4 text-gray-400 font-semibold">Date</th>
+                    <th className="text-left py-3 px-4 text-gray-400 font-semibold">Type</th>
+                    <th className="text-left py-3 px-4 text-gray-400 font-semibold">Espèce</th>
+                    <th className="text-right py-3 px-4 text-gray-400 font-semibold">Quantité</th>
+                    <th className="text-right py-3 px-4 text-gray-400 font-semibold">Poids (kg)</th>
+                    <th className="text-left py-3 px-4 text-gray-400 font-semibold">Motif</th>
+                    <th className="text-right py-3 px-4 text-gray-400 font-semibold">Valeur</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {mouvementsStock.map((mvt) => (
+                    <tr key={mvt.id} className="border-b border-gray-800 hover:bg-gray-800/30 transition-colors">
+                      <td className="py-3 px-4 text-sm text-gray-300">{mvt.date}</td>
+                      <td className="py-3 px-4">
+                        <span className={`px-2 py-1 rounded-full text-xs font-bold ${
+                          mvt.type === 'Entrée' ? 'bg-green-500/20 text-green-400' :
+                          mvt.type === 'Sortie' ? 'bg-blue-500/20 text-blue-400' :
+                          'bg-red-500/20 text-red-400'
+                        }`}>
+                          {mvt.type}
+                        </span>
+                      </td>
+                      <td className="py-3 px-4 text-sm text-white font-semibold">{mvt.espece}</td>
+                      <td className="py-3 px-4 text-right text-sm text-gray-300">{mvt.quantite}</td>
+                      <td className="py-3 px-4 text-right text-sm text-cyan-400 font-semibold">{mvt.poids}</td>
+                      <td className="py-3 px-4 text-sm text-gray-400">{mvt.motif}</td>
+                      <td className="py-3 px-4 text-right text-sm font-bold ${
+                        mvt.valeur > 0 ? 'text-green-400' : 'text-red-400'
+                      }">
+                        {mvt.valeur > 0 ? '+' : ''}${mvt.valeur.toLocaleString()}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* SECTION 5: FACTURATION */}
+      {activeView === 'facturation' && (
+        <div className="space-y-6 animate-slide-up">
+          {/* En-tête Facturation */}
+          <div className="glass-effect-strong rounded-2xl p-6 border border-white/10">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h3 className="text-2xl font-bold mb-2 flex items-center">
+                  <FileText className="w-6 h-6 mr-3 text-yellow-400" />
+                  Facturation & Paiements
+                </h3>
+                <p className="text-gray-400">Suivi des factures et encaissements</p>
+              </div>
+              <div className="flex space-x-2">
+                <button className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg font-semibold flex items-center space-x-2 transition-colors">
+                  <Plus className="w-4 h-4" />
+                  <span>Nouvelle Facture</span>
+                </button>
+                <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold flex items-center space-x-2 transition-colors">
+                  <Download className="w-4 h-4" />
+                  <span>Exporter</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Stats rapides facturation */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="glass-effect rounded-xl p-4 border border-white/10 hover:scale-105 transition-all">
+                <p className="text-sm text-gray-400 mb-1">Total Factures</p>
+                <p className="text-3xl font-bold text-cyan-400">{statsFacturation.totalFactures}</p>
+                <p className="text-xs text-gray-400 mt-1">{statsFacturation.facturesPayees} payées</p>
+              </div>
+              <div className="glass-effect rounded-xl p-4 border border-white/10 hover:scale-105 transition-all">
+                <p className="text-sm text-gray-400 mb-1">Montant Total</p>
+                <p className="text-3xl font-bold text-green-400">${statsFacturation.montantTotalFacture.toLocaleString()}</p>
+                <p className="text-xs text-gray-400 mt-1">Toutes factures</p>
+              </div>
+              <div className="glass-effect rounded-xl p-4 border border-white/10 hover:scale-105 transition-all">
+                <p className="text-sm text-gray-400 mb-1">Encaissé</p>
+                <p className="text-3xl font-bold text-yellow-400">${statsFacturation.montantEncaisse.toLocaleString()}</p>
+                <p className="text-xs text-green-400 mt-1">↑ {statsFacturation.tauxRecouvrement}%</p>
+              </div>
+              <div className="glass-effect rounded-xl p-4 border border-white/10 hover:scale-105 transition-all">
+                <p className="text-sm text-gray-400 mb-1">En Attente</p>
+                <p className="text-3xl font-bold text-orange-400">${statsFacturation.montantEnAttente.toLocaleString()}</p>
+                <p className="text-xs text-gray-400 mt-1">{statsFacturation.facturesEnAttente} factures</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Liste des Factures */}
+          <div className="glass-effect-strong rounded-xl p-6 border border-white/10">
+            <h4 className="text-xl font-bold mb-6 flex items-center">
+              <FileText className="w-5 h-5 mr-2 text-yellow-400" />
+              Factures Récentes
+            </h4>
+            <div className="space-y-4">
+              {factures.map((facture) => (
+                <div
+                  key={facture.id}
+                  className="glass-effect rounded-xl p-6 border border-white/10 hover:scale-105 transition-all"
+                >
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-3 mb-2">
+                        <h5 className="text-xl font-bold text-white">{facture.numeroFacture}</h5>
+                        <span className={`px-3 py-1 rounded-full text-xs font-bold border ${
+                          facture.statut === 'Payée' ? 'bg-green-500/20 text-green-400 border-green-500/50' :
+                          'bg-orange-500/20 text-orange-400 border-orange-500/50'
+                        }`}>
+                          {facture.statut}
+                        </span>
+                      </div>
+                      <p className="text-gray-400 font-semibold">{facture.client}</p>
+                      <p className="text-sm text-gray-500">{facture.adresse}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-2xl font-bold text-yellow-400">${facture.montantTTC.toLocaleString()}</p>
+                      {facture.resteAPayer > 0 && (
+                        <p className="text-sm text-orange-400 mt-1">Reste: ${facture.resteAPayer.toLocaleString()}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Lignes de facture */}
+                  <div className="mb-4 p-4 bg-gray-800/30 rounded-lg">
+                    <p className="text-sm text-gray-400 mb-2 font-semibold">Articles:</p>
+                    <div className="space-y-2">
+                      {facture.lignesFacture.map((ligne, index) => (
+                        <div key={index} className="flex items-center justify-between text-sm">
+                          <span className="text-gray-300">{ligne.designation}</span>
+                          <div className="flex items-center space-x-4">
+                            <span className="text-gray-400">{ligne.quantite} {ligne.unite}</span>
+                            <span className="text-gray-400">@ ${ligne.prixUnitaire}/{ligne.unite}</span>
+                            <span className="text-green-400 font-bold">${ligne.montant.toLocaleString()}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Détails financiers */}
+                  <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-4">
+                    <div>
+                      <p className="text-xs text-gray-400 mb-1">Date émission</p>
+                      <p className="text-sm text-white font-semibold">{facture.dateEmission}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-400 mb-1">Date échéance</p>
+                      <p className="text-sm text-cyan-400">{facture.dateEcheance}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-400 mb-1">Sous-total</p>
+                      <p className="text-sm text-white">${facture.sousTotal.toLocaleString()}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-400 mb-1">Remise ({facture.tauxRemise}%)</p>
+                      <p className="text-sm text-orange-400">-${facture.remise.toLocaleString()}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-400 mb-1">Mode paiement</p>
+                      <p className="text-sm text-white">{facture.modePaiement}</p>
+                    </div>
+                  </div>
+
+                  {/* Pied de page */}
+                  <div className="flex items-center justify-between pt-4 border-t border-gray-700/50">
+                    <div className="flex items-center text-sm text-gray-400">
+                      <Phone className="w-4 h-4 mr-2" />
+                      {facture.contact}
+                    </div>
+                    <div className="flex space-x-2">
+                      <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-semibold transition-colors flex items-center space-x-2">
+                        <Download className="w-4 h-4" />
+                        <span>Télécharger PDF</span>
+                      </button>
+                      {facture.statut === 'En attente' && (
+                        <button className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg text-sm font-semibold transition-colors">
+                          Enregistrer paiement
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Notes */}
+                  {facture.notes && (
+                    <div className="mt-4 p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg">
+                      <p className="text-sm text-blue-400">
+                        <span className="font-semibold">Note:</span> {facture.notes}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* SECTION 6: STATISTIQUES */}
+      {activeView === 'statistiques' && (
+        <div className="space-y-6 animate-slide-up">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="glass-effect-strong rounded-xl p-6 border border-white/10">
+              <h3 className="text-xl font-bold mb-4 text-white">Répartition par Type</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={typeChartData}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                    outerRadius={100}
+                    fill="#8884d8"
+                    dataKey="value"
+                  >
+                    {typeChartData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+
+            <div className="glass-effect-strong rounded-xl p-6 border border-white/10">
+              <h3 className="text-xl font-bold mb-4 text-white">Volume par Zone (kg)</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={zoneChartData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                  <XAxis dataKey="name" stroke="#9ca3af" />
+                  <YAxis stroke="#9ca3af" />
+                  <Tooltip
+                    contentStyle={{ backgroundColor: '#1f2937', border: '1px solid #374151', borderRadius: '8px' }}
+                  />
+                  <Bar dataKey="value" fill="#10b981" radius={[8, 8, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          <div className="glass-effect-strong rounded-xl p-6 border border-white/10">
+            <h3 className="text-xl font-bold mb-4 text-white">Récapitulatif Points de Vente</h3>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-gray-700">
+                    <th className="text-left py-3 px-4 text-gray-400 font-semibold">Point de Vente</th>
+                    <th className="text-left py-3 px-4 text-gray-400 font-semibold">Type</th>
+                    <th className="text-left py-3 px-4 text-gray-400 font-semibold">Zone</th>
+                    <th className="text-right py-3 px-4 text-gray-400 font-semibold">Volume (kg)</th>
+                    <th className="text-right py-3 px-4 text-gray-400 font-semibold">CA ($)</th>
+                    <th className="text-center py-3 px-4 text-gray-400 font-semibold">Statut</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {pointsDeVente.map((point) => (
+                    <tr key={point.id} className="border-b border-gray-800 hover:bg-gray-800/30 transition-colors">
+                      <td className="py-3 px-4 text-white font-semibold">{point.nom}</td>
+                      <td className="py-3 px-4 text-gray-300">{point.type}</td>
+                      <td className="py-3 px-4 text-gray-300">{point.zone}</td>
+                      <td className="py-3 px-4 text-right text-green-400 font-semibold">{point.volumeMensuel.toLocaleString()}</td>
+                      <td className="py-3 px-4 text-right text-yellow-400 font-semibold">${point.caMensuel.toLocaleString()}</td>
+                      <td className="py-3 px-4 text-center">
+                        <span className={`px-3 py-1 rounded-full text-xs font-bold border ${getStatusBadge(point.status)}`}>
+                          {point.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <style jsx>{`
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+        .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
+    </div>
+  );
+};
+
+export default SalesPoints;

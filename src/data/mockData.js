@@ -162,10 +162,6 @@ export const speciesInfo = [
   }
 ];
 
-// ============================================
-// NOUVELLES DONNÉES - POINTS DE VENTE
-// ============================================
-
 export const pointsDeVente = [
   {
     id: 'PV001',
@@ -182,10 +178,10 @@ export const pointsDeVente = [
     typeClient: 'B2B',
     frequenceLivraison: 'Quotidienne',
     volumeMensuel: 2500,
-    chiffreAffairesMensuel: 12500,
+    caMensuel: 12500,
     modeReglement: 'Comptant',
     delaiPaiement: '0 jours',
-    remise: 5,
+    tauxRemise: 5,
     coordonnees: { lat: -4.3276, lng: 15.3136 }
   },
   {
@@ -203,268 +199,252 @@ export const pointsDeVente = [
     typeClient: 'B2B',
     frequenceLivraison: 'Bi-hebdomadaire',
     volumeMensuel: 600,
-    chiffreAffairesMensuel: 3000,
+    caMensuel: 3000,
     modeReglement: 'Virement',
     delaiPaiement: '15 jours',
-    remise: 10,
+    tauxRemise: 10,
     coordonnees: { lat: -4.3369, lng: 15.2665 }
-  },
-  {
-    id: 'PV003',
-    nom: 'Supermarché City Mall',
-    type: 'Grande Surface',
-    zone: 'Limete',
-    adresse: 'Avenue de la Libération, Limete',
-    telephone: '+243 815 234 567',
-    email: 'achat@citymall.cd',
-    responsable: 'Directeur Commercial',
-    status: 'actif',
-    dateOuverture: '2024-02-10',
-    horaireOuverture: '08:00 - 21:00',
-    typeClient: 'B2B',
-    frequenceLivraison: 'Hebdomadaire',
-    volumeMensuel: 1200,
-    chiffreAffairesMensuel: 6000,
-    modeReglement: 'Virement',
-    delaiPaiement: '30 jours',
-    remise: 8,
-    coordonnees: { lat: -4.3827, lng: 15.3333 }
-  },
-  {
-    id: 'PV004',
-    nom: 'Hôtel Royal Palace',
-    type: 'Hôtel',
-    zone: 'Gombe',
-    adresse: 'Avenue des Aviateurs, Gombe',
-    telephone: '+243 820 111 222',
-    email: 'procurement@royalpalace.cd',
-    responsable: 'Chef Achats',
-    status: 'actif',
-    dateOuverture: '2024-04-05',
-    horaireOuverture: '24/7',
-    typeClient: 'B2B',
-    frequenceLivraison: 'Tri-hebdomadaire',
-    volumeMensuel: 800,
-    chiffreAffairesMensuel: 4000,
-    modeReglement: 'Virement',
-    delaiPaiement: '15 jours',
-    remise: 12,
-    coordonnees: { lat: -4.3219, lng: 15.3147 }
-  },
-  {
-    id: 'PV005',
-    nom: 'Marché de Matongé',
-    type: 'Marché Local',
-    zone: 'Kalamu',
-    adresse: 'Avenue Kasa-Vubu, Kalamu',
-    telephone: '+243 897 654 321',
-    email: null,
-    responsable: 'Association des Commerçants',
-    status: 'actif',
-    dateOuverture: '2024-05-12',
-    horaireOuverture: '05:00 - 19:00',
-    typeClient: 'B2C',
-    frequenceLivraison: 'Bi-hebdomadaire',
-    volumeMensuel: 1500,
-    chiffreAffairesMensuel: 7500,
-    modeReglement: 'Comptant',
-    delaiPaiement: '0 jours',
-    remise: 3,
-    coordonnees: { lat: -4.3368, lng: 15.3136 }
-  },
-  {
-    id: 'PV006',
-    nom: 'Grossiste Poisson Frais SA',
-    type: 'Grossiste',
-    zone: 'Kintambo',
-    adresse: 'Rue des Pêcheurs, Kintambo',
-    telephone: '+243 818 999 888',
-    email: 'ventes@poissonfrais.cd',
-    responsable: 'M. Joseph Mbala',
-    status: 'actif',
-    dateOuverture: '2024-06-01',
-    horaireOuverture: '04:00 - 14:00',
-    typeClient: 'B2B',
-    frequenceLivraison: 'Quotidienne',
-    volumeMensuel: 3000,
-    chiffreAffairesMensuel: 15000,
-    modeReglement: 'Comptant',
-    delaiPaiement: '0 jours',
-    remise: 7,
-    coordonnees: { lat: -4.3465, lng: 15.2896 }
-  },
-  {
-    id: 'PV007',
-    nom: 'Restaurant Chez Ntemba',
-    type: 'Restaurant',
-    zone: 'Bandalungwa',
-    adresse: 'Avenue Maman Yemo, Bandalungwa',
-    telephone: '+243 899 111 000',
-    email: 'contact@chezntemba.cd',
-    responsable: 'Patron Ntemba',
-    status: 'inactif',
-    dateOuverture: '2024-07-15',
-    horaireOuverture: '10:00 - 22:00',
-    typeClient: 'B2B',
-    frequenceLivraison: 'Hebdomadaire',
-    volumeMensuel: 400,
-    chiffreAffairesMensuel: 2000,
-    modeReglement: 'Mobile Money',
-    delaiPaiement: '7 jours',
-    remise: 5,
-    coordonnees: { lat: -4.3624, lng: 15.2951 }
-  },
-  {
-    id: 'PV008',
-    nom: 'Point de Vente Direct Ferme',
-    type: 'Vente Directe',
-    zone: 'Mont-Ngafula',
-    adresse: 'Ferme KABEYA, Mont-Ngafula',
-    telephone: '+243 814 441 299',
-    email: 'david.kabeya@hotmail.com',
-    responsable: 'David Kabeya',
-    status: 'actif',
-    dateOuverture: '2024-01-01',
-    horaireOuverture: '08:00 - 17:00',
-    typeClient: 'B2C',
-    frequenceLivraison: 'Sur place',
-    volumeMensuel: 800,
-    chiffreAffairesMensuel: 4000,
-    modeReglement: 'Comptant',
-    delaiPaiement: '0 jours',
-    remise: 0,
-    coordonnees: { lat: -4.4297, lng: 15.2820 }
   }
 ];
 
-// Historique de livraisons
 export const livraisonsHistorique = [
-  { id: 'LIV001', date: '08/12/2025', pointVente: 'PV001', espece: 'Ngolo', quantite: 250, montant: 1250, status: 'livree' },
-  { id: 'LIV002', date: '08/12/2025', pointVente: 'PV006', espece: 'Tilapia', quantite: 180, montant: 900, status: 'livree' },
-  { id: 'LIV003', date: '07/12/2025', pointVente: 'PV002', espece: 'Kongo ya Sika', quantite: 50, montant: 250, status: 'livree' },
-  { id: 'LIV004', date: '07/12/2025', pointVente: 'PV003', espece: 'Ngolo', quantite: 120, montant: 600, status: 'livree' },
-  { id: 'LIV005', date: '06/12/2025', pointVente: 'PV004', espece: 'Tilapia', quantite: 80, montant: 400, status: 'livree' },
-  { id: 'LIV006', date: '06/12/2025', pointVente: 'PV005', espece: 'Ngolo', quantite: 150, montant: 750, status: 'livree' },
-  { id: 'LIV007', date: '09/12/2025', pointVente: 'PV001', espece: 'Tilapia', quantite: 200, montant: 1000, status: 'en-cours' },
-  { id: 'LIV008', date: '10/12/2025', pointVente: 'PV002', espece: 'Ngolo', quantite: 60, montant: 300, status: 'planifiee' }
+  { 
+    id: 'LIV001', 
+    date: '21/12/2025', 
+    pointVente: 'Marché Central de Kinshasa',
+    adresse: 'Avenue du Commerce, Gombe',
+    articles: ['Ngolo'], 
+    quantite: 250, 
+    montant: 1250, 
+    status: 'livree',
+    chauffeur: 'Jean Transport',
+    contact: '+243 812 345 678'
+  }
 ];
 
-// Pré-commandes
 export const preCommandes = [
   {
     id: 'PC001',
-    numero: 'CMD-2025-001',
-    pointVente: 'PV001',
-    client: 'Marché Central de Kinshasa',
+    numeroCommande: 'CMD-2025-001',
+    pointVente: 'Marché Central de Kinshasa',
+    client: 'Mama Thérèse',
     dateCommande: '05/12/2025',
     dateLivraisonSouhaitee: '20/01/2026',
     status: 'confirmee',
     priorite: 'haute',
     articles: [
-      { espece: 'Ngolo', quantite: 500, prixUnitaire: 5, total: 2500 },
-      { espece: 'Tilapia', quantite: 300, prixUnitaire: 5, total: 1500 }
+      { espece: 'Ngolo', quantite: 500, prixUnitaire: 5, montant: 2500 }
     ],
-    montantTotal: 4000,
+    montantTotal: 2500,
     acompteVerse: 1000,
-    resteAPayer: 3000,
+    resteAPayer: 1500,
     modeReglement: 'Comptant',
-    notesSpeciales: 'Poissons vivants préférés, livraison tôt le matin',
-    responsableCommande: 'Mama Thérèse',
-    telephone: '+243 812 345 678'
-  },
-  {
-    id: 'PC002',
-    numero: 'CMD-2025-002',
-    pointVente: 'PV003',
-    client: 'Supermarché City Mall',
-    dateCommande: '08/12/2025',
-    dateLivraisonSouhaitee: '25/01/2026',
-    status: 'en-attente',
-    priorite: 'moyenne',
-    articles: [
-      { espece: 'Kongo ya Sika', quantite: 150, prixUnitaire: 5, total: 750 },
-      { espece: 'Tilapia', quantite: 200, prixUnitaire: 5, total: 1000 }
-    ],
-    montantTotal: 1750,
-    acompteVerse: 0,
-    resteAPayer: 1750,
-    modeReglement: 'Virement',
-    notesSpeciales: 'Emballage sous vide requis, étiquetage avec date',
-    responsableCommande: 'Directeur Commercial',
-    telephone: '+243 815 234 567'
-  },
-  {
-    id: 'PC003',
-    numero: 'CMD-2025-003',
-    pointVente: 'PV004',
-    client: 'Hôtel Royal Palace',
-    dateCommande: '10/12/2025',
-    dateLivraisonSouhaitee: '15/01/2026',
-    status: 'confirmee',
-    priorite: 'haute',
-    articles: [
-      { espece: 'Ngolo', quantite: 200, prixUnitaire: 5, total: 1000 },
-      { espece: 'Kongo ya Sika', quantite: 100, prixUnitaire: 5, total: 500 }
-    ],
-    montantTotal: 1500,
-    acompteVerse: 500,
-    resteAPayer: 1000,
-    modeReglement: 'Virement',
-    notesSpeciales: 'Qualité premium exigée pour restaurant gastronomique',
-    responsableCommande: 'Chef Achats',
-    telephone: '+243 820 111 222'
-  },
-  {
-    id: 'PC004',
-    numero: 'CMD-2025-004',
-    pointVente: 'PV002',
-    client: 'Restaurant Le Gourmet',
-    dateCommande: '12/12/2025',
-    dateLivraisonSouhaitee: '30/01/2026',
-    status: 'en-attente',
-    priorite: 'basse',
-    articles: [
-      { espece: 'Tilapia', quantite: 150, prixUnitaire: 5, total: 750 }
-    ],
-    montantTotal: 750,
-    acompteVerse: 0,
-    resteAPayer: 750,
-    modeReglement: 'Virement',
-    notesSpeciales: 'Poissons éviscérés, poids uniforme 400-500g',
-    responsableCommande: 'Chef Pierre Malonga',
-    telephone: '+243 898 765 432'
-  },
-  {
-    id: 'PC005',
-    numero: 'CMD-2025-005',
-    pointVente: 'PV006',
-    client: 'Grossiste Poisson Frais SA',
-    dateCommande: '14/12/2025',
-    dateLivraisonSouhaitee: '10/02/2026',
-    status: 'confirmee',
-    priorite: 'haute',
-    articles: [
-      { espece: 'Ngolo', quantite: 800, prixUnitaire: 5, total: 4000 },
-      { espece: 'Tilapia', quantite: 600, prixUnitaire: 5, total: 3000 }
-    ],
-    montantTotal: 7000,
-    acompteVerse: 2000,
-    resteAPayer: 5000,
-    modeReglement: 'Comptant',
-    notesSpeciales: 'Commande régulière mensuelle, livraison à 4h du matin',
-    responsableCommande: 'M. Joseph Mbala',
-    telephone: '+243 818 999 888'
+    notes: 'Poissons vivants préférés',
+    contact: '+243 812 345 678'
   }
 ];
 
-// Statistiques points de vente
 export const statsPointsVente = {
-  totalPointsVente: 8,
-  pointsActifs: 7,
-  pointsInactifs: 1,
-  volumeTotalMensuel: 10800,
-  caMensuelTotal: 54000,
-  moyenneCommandeParPoint: 1350,
-  meilleurClient: 'PV006',
+  totalPointsVente: 2,
+  pointsActifs: 2,
+  pointsInactifs: 0,
+  volumeTotalMensuel: 3100,
+  caMensuelTotal: 15500,
+  moyenneCommandeParPoint: 1550,
+  meilleurClient: 'PV001',
   zonePlusActive: 'Gombe'
 };
+
+export const stockPoissons = [
+  {
+    produit: 'Tilapia Frais',
+    categorie: 'Poissons d\'eau douce',
+    quantiteEnStock: 450,
+    seuilAlerte: 200,
+    prixUnitaire: 3.50,
+    derniereMiseAJour: '21/12/2025'
+  },
+  {
+    produit: 'Capitaine',
+    categorie: 'Poissons d\'eau douce',
+    quantiteEnStock: 180,
+    seuilAlerte: 150,
+    prixUnitaire: 5.00,
+    derniereMiseAJour: '21/12/2025'
+  },
+  {
+    produit: 'Maquereau Fumé',
+    categorie: 'Poissons transformés',
+    quantiteEnStock: 320,
+    seuilAlerte: 250,
+    prixUnitaire: 4.20,
+    derniereMiseAJour: '20/12/2025'
+  },
+  {
+    produit: 'Sardines',
+    categorie: 'Poissons marins',
+    quantiteEnStock: 280,
+    seuilAlerte: 200,
+    prixUnitaire: 2.80,
+    derniereMiseAJour: '21/12/2025'
+  },
+  {
+    produit: 'Crevettes',
+    categorie: 'Fruits de mer',
+    quantiteEnStock: 95,
+    seuilAlerte: 120,
+    prixUnitaire: 12.00,
+    derniereMiseAJour: '20/12/2025'
+  }
+];
+
+export const mouvementsStock = [
+  {
+    id: 'MVT001',
+    date: '21/12/2025 08:30',
+    produit: 'Tilapia Frais',
+    type: 'Entrée',
+    quantite: 200,
+    reference: 'ACH-2025-012',
+    motif: 'Achat Fournisseur'
+  },
+  {
+    id: 'MVT002',
+    date: '21/12/2025 10:15',
+    produit: 'Capitaine Congelé',
+    type: 'Sortie',
+    quantite: 150,
+    reference: 'LIV-2025-045',
+    motif: 'Livraison Client'
+  }
+];
+
+export const alertesStock = [
+  {
+    id: 'ALT001',
+    type: 'warning',
+    priorite: 'haute',
+    espece: 'Crevettes',
+    message: 'Stock en dessous du seuil d\'alerte',
+    dateAlerte: '21/12/2025',
+    action: 'Réapprovisionner rapidement'
+  }
+];
+
+export const factures = [
+  {
+    numeroFacture: 'FAC-2025-001',
+    client: 'Restaurant Le Gourmet',
+    pointDeVente: 'Gombe',
+    dateEmission: '15/12/2025',
+    dateEcheance: '15/01/2026',
+    montantHT: 1500,
+    tva: 225,
+    montantTotal: 1725,
+    statut: 'Payée',
+    montantPaye: 1725,
+    resteAPayer: 0,
+    articles: [
+      { produit: 'Tilapia Frais', quantite: 120, prixUnitaire: 5.5, montant: 660 },
+      { produit: 'Capitaine Congelé', quantite: 80, prixUnitaire: 6.8, montant: 544 }
+    ]
+  },
+  {
+    numeroFacture: 'FAC-2025-002',
+    client: 'Hôtel Memling',
+    pointDeVente: 'Gombe',
+    dateEmission: '16/12/2025',
+    dateEcheance: '16/01/2026',
+    montantHT: 2800,
+    tva: 420,
+    montantTotal: 3220,
+    statut: 'En attente',
+    montantPaye: 0,
+    resteAPayer: 3220,
+    articles: [
+      { produit: 'Maquereau Fumé', quantite: 200, prixUnitaire: 4.8, montant: 960 }
+    ]
+  },
+  {
+    numeroFacture: 'FAC-2025-003',
+    client: 'Restaurant La Belle Vue',
+    pointDeVente: 'Limete',
+    dateEmission: '14/12/2025',
+    dateEcheance: '14/01/2026',
+    montantHT: 980,
+    tva: 147,
+    montantTotal: 1127,
+    statut: 'En retard',
+    montantPaye: 0,
+    resteAPayer: 1127,
+    articles: [
+      { produit: 'Sardines', quantite: 100, prixUnitaire: 2.8, montant: 280 }
+    ]
+  }
+];
+
+export const statsFacturation = {
+  totalFactures: 3,
+  facturesPayees: 1,
+  facturesEnAttente: 1,
+  facturesEnRetard: 1,
+  montantTotalFacture: 6072,
+  montantEncaisse: 1725,
+  montantEnAttente: 4347,
+  tauxRecouvrement: 28.4,
+  delaiPaiementMoyen: 15
+};
+
+export const stock = [
+  {
+    id: 'STK001',
+    produit: 'Tilapia Frais',
+    categorie: 'Poisson Frais',
+    quantite: 850,
+    stockMinimum: 200,
+    prixUnitaire: 5.5,
+    emplacement: 'Chambre Froide A',
+    statut: 'Optimal'
+  },
+  {
+    id: 'STK002',
+    produit: 'Capitaine Congelé',
+    categorie: 'Poisson Congelé',
+    quantite: 450,
+    stockMinimum: 300,
+    prixUnitaire: 6.8,
+    emplacement: 'Chambre Froide B',
+    statut: 'Optimal'
+  },
+  {
+    id: 'STK003',
+    produit: 'Silure Fumé',
+    categorie: 'Poisson Transformé',
+    quantite: 180,
+    stockMinimum: 150,
+    prixUnitaire: 8.5,
+    emplacement: 'Zone Séchage',
+    statut: 'Bas'
+  },
+  {
+    id: 'STK004',
+    produit: 'Carpe Premium',
+    categorie: 'Poisson Frais',
+    quantite: 95,
+    stockMinimum: 100,
+    prixUnitaire: 7.2,
+    emplacement: 'Chambre Froide A',
+    statut: 'Critique'
+  }
+];
+
+export const paiements = [
+  {
+    id: 'PAY001',
+    date: '16/12/2025',
+    numeroFacture: 'FAC-2025-001',
+    client: 'Restaurant Le Gourmet',
+    montant: 1725,
+    methodePaiement: 'Virement Bancaire'
+  }
+];
